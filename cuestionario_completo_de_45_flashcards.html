@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen Oficial - Sistemas Productivos, THD y Gestión del Cambio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        /* Custom scrollbar for question navigation map */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800 flex flex-col justify-between selection:bg-indigo-100 selection:text-indigo-900">
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-20 shadow-sm">
+        <div class="max-w-5xl mx-auto px-4 py-3.5 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center space-x-3">
+                <div class="bg-slate-900 text-white p-2 rounded-xl shadow">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-base sm:text-lg font-bold text-slate-900 leading-tight">Simulacro de Examen: Industria 4.0 y Gestión</h1>
+                    <p class="text-xs text-slate-500">45 Preguntas Oficiales &bull; Evaluación Integral</p>
+                </div>
+            </div>
+
+            <div id="header-controls" class="hidden flex items-center space-x-2 sm:space-x-3">
+                <button onclick="toggleQuestionMap()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs sm:text-sm font-medium transition-colors flex items-center gap-1.5 cursor-pointer border border-slate-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                    </svg>
+                    <span>Panel (<span id="answered-count">0</span>/45)</span>
+                </button>
+                <div class="bg-indigo-50 text-indigo-800 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold border border-indigo-200">
+                    Pregunta <span id="current-q-num">1</span> de 45
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-4xl w-full mx-auto px-4 py-6 sm:py-8 flex-grow flex flex-col justify-center">
+
+        <!-- 1. Start / Configuration Screen -->
+        <div id="welcome-view" class="bg-white rounded-2xl shadow-lg border border-slate-200/80 p-6 sm:p-10 max-w-2xl mx-auto w-full space-y-8">
+            <div class="text-center space-y-3">
+                <span class="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-bold uppercase tracking-wider rounded-full border border-indigo-100">
+                    Cuestionario Completo (45 Ítems)
+                </span>
+                <h2 class="text-2xl sm:text-3xl font-bold text-slate-900">Sistemas Productivos, THD y Gestión del Cambio</h2>
+                <p class="text-slate-600 text-sm sm:text-base max-w-lg mx-auto">
+                    Pon a prueba tus conocimientos con las 45 flashcards exactas del temario en formato examen tipo test con opciones de dificultad realista.
+                </p>
+            </div>
+
+            <!-- Configuration Options -->
+            <div class="bg-slate-50 rounded-xl p-5 border border-slate-200/80 space-y-4">
+                <h3 class="text-sm font-semibold text-slate-800 uppercase tracking-wide">Configuración del Examen</h3>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <label class="relative flex items-start p-3.5 bg-white rounded-xl border-2 border-indigo-600 cursor-pointer shadow-sm" id="label-ordered" onclick="setOrderMode('ordered')">
+                        <input type="radio" name="orderMode" value="ordered" checked class="mt-1 text-indigo-600 focus:ring-indigo-500">
+                        <div class="ml-3">
+                            <span class="block text-sm font-semibold text-slate-900">Orden Secuencial (1 - 45)</span>
+                            <span class="block text-xs text-slate-500 mt-0.5">Sigue el orden progresivo del temario original.</span>
+                        </div>
+                    </label>
+
+                    <label class="relative flex items-start p-3.5 bg-white rounded-xl border border-slate-200 hover:border-slate-300 cursor-pointer transition-all" id="label-shuffled" onclick="setOrderMode('shuffled')">
+                        <input type="radio" name="orderMode" value="shuffled" class="mt-1 text-indigo-600 focus:ring-indigo-500">
+                        <div class="ml-3">
+                            <span class="block text-sm font-semibold text-slate-900">Orden Aleatorio</span>
+                            <span class="block text-xs text-slate-500 mt-0.5">Baraja las 45 preguntas para evitar memorizar posiciones.</span>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="pt-2 border-t border-slate-200/80 flex items-center justify-between">
+                    <div>
+                        <span class="block text-sm font-semibold text-slate-900">Modo de Corrección</span>
+                        <span class="block text-xs text-slate-500">Elige cuándo ver si has acertado o fallado</span>
+                    </div>
+                    <select id="feedback-mode" class="bg-white border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 p-2 font-medium">
+                        <option value="immediate">Corrección inmediata tras responder</option>
+                        <option value="exam">Simulacro estricto (solo al finalizar)</option>
+                    </select>
+                </div>
+            </div>
+
+            <button onclick="startQuiz()" class="w-full py-4 bg-slate-900 hover:bg-indigo-600 text-white font-semibold rounded-xl shadow-md transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer text-base">
+                <span>Comenzar Examen de 45 Preguntas</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- 2. Quiz Active Screen -->
+        <div id="quiz-view" class="hidden space-y-5">
+            
+            <!-- Collapsible Question Navigator Grid -->
+            <div id="question-map-panel" class="hidden bg-white rounded-2xl shadow-md border border-slate-200 p-4 sm:p-5 transition-all">
+                <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Navegación Rápida (45 Preguntas)</span>
+                    <div class="flex items-center gap-3 text-xs text-slate-500">
+                        <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-indigo-600 inline-block"></span> Actual</span>
+                        <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-slate-700 inline-block"></span> Respondida</span>
+                        <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-slate-200 inline-block"></span> Pendiente</span>
+                    </div>
+                </div>
+                <div id="question-grid" class="grid grid-cols-9 sm:grid-cols-15 gap-1.5 max-h-48 overflow-y-auto p-1">
+                    <!-- Grid buttons injected via JS -->
+                </div>
+            </div>
+
+            <!-- Linear Progress Bar -->
+            <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                <div id="progress-bar" class="bg-indigo-600 h-full transition-all duration-300" style="width: 2.22%"></div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="bg-white rounded-2xl shadow-lg border border-slate-200/90 p-6 sm:p-8 space-y-6">
+                <div class="flex items-start justify-between gap-4">
+                    <span id="original-number-tag" class="px-2.5 py-1 bg-slate-100 text-slate-600 text-xs font-semibold rounded-md border border-slate-200 shrink-0">
+                        Ítem #1
+                    </span>
+                </div>
+
+                <h2 id="question-text" class="text-lg sm:text-xl font-semibold text-slate-900 leading-relaxed">
+                    <!-- Question text injected via JS -->
+                </h2>
+
+                <!-- Options Container -->
+                <div id="options-container" class="space-y-3">
+                    <!-- Options injected via JS -->
+                </div>
+
+                <!-- Immediate Feedback Banner -->
+                <div id="feedback-banner" class="hidden p-4 rounded-xl text-sm border font-medium flex items-center gap-3">
+                    <!-- Feedback injected via JS -->
+                </div>
+
+                <!-- Navigation Footer inside Card -->
+                <div class="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
+                    <button id="prev-btn" onclick="prevQuestion()" class="px-4 py-2.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium rounded-xl transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5 text-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                        </svg>
+                        Anterior
+                    </button>
+
+                    <div class="flex items-center gap-2 ml-auto">
+                        <button id="finish-early-btn" onclick="attemptFinishQuiz()" class="px-4 py-2.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 font-semibold rounded-xl transition-colors cursor-pointer text-sm">
+                            Finalizar y Corregir
+                        </button>
+                        <button id="next-btn" onclick="nextQuestion()" class="px-5 py-2.5 bg-slate-900 hover:bg-indigo-600 text-white font-medium rounded-xl shadow-sm transition-colors cursor-pointer flex items-center gap-1.5 text-sm">
+                            <span>Siguiente</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Custom Confirmation Modal (No alert/confirm used) -->
+        <div id="confirm-modal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full p-6 space-y-5">
+                <div class="space-y-2">
+                    <h3 class="text-lg font-bold text-slate-900">¿Finalizar el examen ahora?</h3>
+                    <p id="confirm-modal-text" class="text-sm text-slate-600">
+                        Aún tienes preguntas sin responder. Las preguntas en blanco contarán como no acertadas.
+                    </p>
+                </div>
+                <div class="flex justify-end gap-3">
+                    <button onclick="closeConfirmModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-xl text-sm cursor-pointer">
+                        Seguir respondiendo
+                    </button>
+                    <button onclick="finalizeQuiz()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-sm cursor-pointer">
+                        Entregar Examen
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Results & Detailed Review Screen -->
+        <div id="results-view" class="hidden space-y-6">
+            <!-- Summary Card -->
+            <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-6 sm:p-8 text-center space-y-6">
+                <div class="space-y-2">
+                    <span class="inline-block px-3 py-1 bg-slate-100 text-slate-700 text-xs font-bold uppercase tracking-wider rounded-full">
+                        Resultados Oficiales
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-slate-900">Calificación Final</h2>
+                </div>
+
+                <!-- Score Stats Grid -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl mx-auto">
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <span class="block text-xs text-slate-500 font-medium">Nota (sobre 10)</span>
+                        <span id="stat-grade" class="text-2xl font-bold text-indigo-600 mt-1 block">0.00</span>
+                    </div>
+                    <div class="bg-emerald-50/70 p-4 rounded-xl border border-emerald-200">
+                        <span class="block text-xs text-emerald-700 font-medium">Aciertos</span>
+                        <span id="stat-correct" class="text-2xl font-bold text-emerald-700 mt-1 block">0</span>
+                    </div>
+                    <div class="bg-rose-50/70 p-4 rounded-xl border border-rose-200">
+                        <span class="block text-xs text-rose-700 font-medium">Fallos</span>
+                        <span id="stat-wrong" class="text-2xl font-bold text-rose-700 mt-1 block">0</span>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <span class="block text-xs text-slate-500 font-medium">En Blanco</span>
+                        <span id="stat-blank" class="text-2xl font-bold text-slate-700 mt-1 block">0</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap justify-center gap-3 pt-2">
+                    <button onclick="restartSameConfig()" class="px-6 py-3 bg-slate-900 hover:bg-indigo-600 text-white font-semibold rounded-xl shadow transition-colors cursor-pointer text-sm">
+                        Repetir Examen
+                    </button>
+                    <button onclick="returnToMenu()" class="px-6 py-3 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-semibold rounded-xl transition-colors cursor-pointer text-sm">
+                        Cambiar Configuración
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filter Tabs for Review -->
+            <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-6 sm:p-8 space-y-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900">Revisión Detallada de Respuestas</h3>
+                        <p class="text-xs text-slate-500">Compara tu selección con la respuesta exacta de cada flashcard</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="filterReview('incorrect')" id="filter-incorrect" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-rose-600 text-white cursor-pointer transition-colors">
+                            Solo Fallos / Blanco (<span id="count-incorrect-tab">0</span>)
+                        </button>
+                        <button onclick="filterReview('all')" id="filter-all" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer transition-colors">
+                            Todas (45)
+                        </button>
+                    </div>
+                </div>
+
+                <div id="review-list" class="space-y-4">
+                    <!-- Detailed review items injected via JS -->
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center py-4 text-xs text-slate-400 border-t border-slate-200/60 bg-white mt-8">
+        Cuestionario Integral de 45 Flashcards &bull; Sistemas Productivos, THD y Gestión del Cambio
+    </footer>
+
+    <script>
+        /**
+         * Banco completo con las 45 flashcards exactas.
+         * Regla 1: Respuesta correcta literal sin pistas ni modificaciones que alteren el sentido.
+         * Regla 2: 3 distractores plausibles, técnicos y de longitud equilibrada.
+         */
+        const RAW_FLASHCARDS = [
+            {
+                id: 1,
+                question: "¿Qué es un sistema productivo?",
+                correct: "Es el conjunto de actividades, procesos y recursos que una empresa o sector emplea para producir bienes o servicios y satisfacer las necesidades del mercado.",
+                distractors: [
+                    "Es la estructura jerárquica y administrativa que define los departamentos financieros y comerciales de una organización para optimizar sus márgenes.",
+                    "Es el catálogo de normativas internacionales y estándares de auditoría que regulan la distribución logística de mercancías en mercados globales.",
+                    "Es el conjunto de herramientas informáticas de planificación financiera destinadas exclusivamente a calcular la amortización de activos industriales."
+                ]
+            },
+            {
+                id: 2,
+                question: "¿Qué hito histórico permitió el desarrollo de las primeras civilizaciones y economías?",
+                correct: "La Revolución Agrícola.",
+                distractors: [
+                    "La Revolución Comercial.",
+                    "La Revolución Metalúrgica.",
+                    "La Revolución Gremial."
+                ]
+            },
+            {
+                id: 3,
+                question: "¿En qué siglo tuvo lugar la Primera Revolución Industrial y cuál fue su principal avance tecnológico?",
+                correct: "Tuvo lugar a finales del siglo XVIII (1760-1840) en Gran Bretaña, introduciendo la máquina de vapor y motores de agua para mecanizar la producción.",
+                distractors: [
+                    "Tuvo lugar a mediados del siglo XIX (1850-1890) en Alemania, introduciendo el motor de combustión interna y la refinación petroquímica industrial.",
+                    "Tuvo lugar a principios del siglo XVII (1610-1680) en Países Bajos, introduciendo los telares automáticos eléctricos y las primeras redes telegráficas.",
+                    "Tuvo lugar a finales del siglo XIX (1870-1914) en Estados Unidos, introduciendo la corriente alterna trifásica y las primeras cadenas de montaje."
+                ]
+            },
+            {
+                id: 4,
+                question: "¿Qué modelo de producción de principios del siglo XX introdujo la cadena de montaje para aumentar la eficiencia?",
+                correct: "El Fordismo.",
+                distractors: [
+                    "El Toyotismo.",
+                    "El Volvismo.",
+                    "El Kanbanismo."
+                ]
+            },
+            {
+                id: 5,
+                question: "¿En qué consiste el modelo productivo del Toyotismo desarrollado entre 1970 y 1980?",
+                correct: "En la producción \"justo a tiempo\" (Just in Time), orientada a minimizar desperdicios y maximizar la calidad.",
+                distractors: [
+                    "En la producción en masa estandarizada mediante grandes inventarios de seguridad para absorber fluctuaciones de la demanda.",
+                    "En la división rígida entre planificación directiva y ejecución manual basada en el cronometraje estricto de tareas individuales.",
+                    "En la subcontratación integral de los procesos de ensamblaje hacia plantas deslocalizadas con bajo coste de mano de obra."
+                ]
+            },
+            {
+                id: 6,
+                question: "¿Qué avance energético caracterizó el inicio de la Segunda Revolución Industrial en el siglo XIX?",
+                correct: "El descubrimiento y aplicación de la electricidad.",
+                distractors: [
+                    "La fisión nuclear controlada en centrales térmicas.",
+                    "La gasificación industrial del carbón mineral.",
+                    "La energía hidráulica mediante ruedas de paletas."
+                ]
+            },
+            {
+                id: 7,
+                question: "¿Qué tecnologías comenzaron a incorporarse en la Tercera Revolución Industrial a finales de la década de 1950?",
+                correct: "Tecnología electrónica, informática y software de automatización.",
+                distractors: [
+                    "Gemelos digitales, computación cuántica y redes neuronales profundas.",
+                    "Máquinas de vapor de alta presión, telares mecánicos y fundición de acero.",
+                    "Impresión 3D metálica, vehículos autónomos y plataformas blockchain."
+                ]
+            },
+            {
+                id: 8,
+                question: "¿En qué pilares tecnológicos se fundamenta la Cuarta Revolución Industrial?",
+                correct: "En sistemas físicos cibernéticos (CPS), Internet de las Cosas (IoT), tecnología interconectada y Smart Manufacturing.",
+                distractors: [
+                    "En autómatas programables aislados (PLC), electrónica analógica de estado sólido y líneas de montaje semiautomáticas.",
+                    "En la electrificación de plantas fabriles, producción en serie a gran escala y cadenas de suministro lineales.",
+                    "En la mecanización hidráulica, estandarización de piezas intercambiables y transporte ferroviario de mercancías."
+                ]
+            },
+            {
+                id: 9,
+                question: "¿Cómo se define el concepto de 'Productividad'?",
+                correct: "La relación entre la cantidad de productos generados y los recursos utilizados.",
+                distractors: [
+                    "El porcentaje total de artículos fabricados que superan la inspección sin defectos.",
+                    "La capacidad máxima teórica de fabricación de una planta trabajando sin interrupciones.",
+                    "El margen económico neto obtenido tras descontar los costes fijos de amortización."
+                ]
+            },
+            {
+                id: 10,
+                question: "¿Cómo se define la 'Eficiencia' en el contexto del sistema productivo?",
+                correct: "La capacidad de maximizar la producción utilizando la menor cantidad posible de recursos.",
+                distractors: [
+                    "El grado en que los objetivos comerciales planificados se alcanzan sin importar el coste.",
+                    "La velocidad máxima de desplazamiento de los materiales a lo largo de la cadena logística.",
+                    "El nivel de satisfacción percibido por el consumidor final respecto a las prestaciones."
+                ]
+            },
+            {
+                id: 11,
+                question: "En el sistema productivo, la _____ mide el grado en que un producto o servicio cumple con los requisitos o expectativas del cliente.",
+                correct: "Calidad",
+                distractors: [
+                    "Productividad",
+                    "Trazabilidad",
+                    "Escalabilidad"
+                ]
+            },
+            {
+                id: 12,
+                question: "¿Cuáles son los cuatro factores principales que impulsan la transformación del sistema productivo?",
+                correct: "1. Globalización, 2. Digitalización, 3. Sostenibilidad, 4. Innovación tecnológica",
+                distractors: [
+                    "1. Deslocalización, 2. Burocratización, 3. Monopolización, 4. Estandarización",
+                    "1. Proteccionismo, 2. Mecanización, 3. Subcontratación, 4. Jerarquización",
+                    "1. Centralización, 2. Privatización, 3. Automatización, 4. Especialización"
+                ]
+            },
+            {
+                id: 13,
+                question: "¿De qué manera impacta la globalización en los sistemas productivos?",
+                correct: "Amplía los mercados, permite acceder a recursos y mano de obra global, genera competencia internacional y exige la adaptación a estándares internacionales.",
+                distractors: [
+                    "Limita los intercambios comerciales a bloques regionales cercanos, reduce la exigencia normativa y elimina la necesidad de innovar en procesos.",
+                    "Fomenta el autosuministro local de materias primas, disminuye la interdependencia logística y estandariza los salarios a nivel mundial.",
+                    "Prioriza la producción artesanal a pequeña escala, restringe la transferencia tecnológica y reduce la presión competitiva entre fabricantes."
+                ]
+            },
+            {
+                id: 14,
+                question: "¿Qué es el mantenimiento predictivo en el entorno de la Industria 4.0?",
+                correct: "La monitorización en tiempo real mediante sensores para detectar fallos tempranos en la maquinaria y evitar tiempos de inactividad no planificados.",
+                distractors: [
+                    "La sustitución periódica y obligatoria de componentes mecánicos según un calendario fijo establecido por el fabricante tras cierto número de horas.",
+                    "La reparación inmediata de los equipos industriales una vez que se ha producido una avería crítica que detiene la línea de producción.",
+                    "La inspección visual manual realizada por operarios especializados al finalizar cada turno de trabajo para registrar incidencias en papel."
+                ]
+            },
+            {
+                id: 15,
+                question: "¿Cuáles son tres características clave de los modelos de negocio tradicionales?",
+                correct: "1. Enfoque en la producción en masa (economías de escala). 2. Estructuras jerárquicas y decisiones verticales. 3. Dependencia de recursos físicos (fábricas, maquinaria, empleados).",
+                distractors: [
+                    "1. Enfoque en la hiperpersonalización bajo demanda. 2. Equipos multidisciplinares autogestionados. 3. Predominio de activos intangibles y ecosistemas abiertos.",
+                    "1. Ciclos de iteración rápida basados en datos en tiempo real. 2. Toma de decisiones descentralizada. 3. Escalabilidad exponencial sin inversión en infraestructura.",
+                    "1. Servitización continua del producto físico. 2. Redes colaborativas horizontales. 3. Monetización mediante suscripciones en plataformas en la nube."
+                ]
+            },
+            {
+                id: 16,
+                question: "¿Cuáles son tres características clave de los modelos de negocio modernos?",
+                correct: "1. Personalización y flexibilidad. 2. Estructuras organizacionales ágiles y horizontales. 3. Uso de plataformas digitales y recursos intangibles (datos, software).",
+                distractors: [
+                    "1. Producción rígida en grandes lotes estandarizados. 2. Cadenas de mando estrictamente verticales. 3. Control exclusivo de activos físicos e instalaciones propias.",
+                    "1. Planificación estratégica quinquenal inamovible. 2. Departamentos funcionales aislados entre sí. 3. Inversión intensiva en inventarios de materias primas.",
+                    "1. Competencia basada únicamente en reducción de costes laborales. 2. Comunicación formal descendente. 3. Distribución física mediante canales minoristas cerrados."
+                ]
+            },
+            {
+                id: 17,
+                question: "¿Qué son las Tecnologías Habilitadoras Digitales (THD)?",
+                correct: "Conjunto de tecnologías avanzadas que impulsan la transformación digital en las organizaciones y los sistemas productivos.",
+                distractors: [
+                    "Conjunto de protocolos legales y normativas fiscales que regulan el comercio electrónico transfronterizo entre empresas.",
+                    "Conjunto de maquinaria pesada convencional empleada en la industria siderúrgica para el conformado mecánico de metales.",
+                    "Conjunto de metodologías contables tradicionales diseñadas para auditar el rendimiento financiero de proyectos industriales."
+                ]
+            },
+            {
+                id: 18,
+                question: "¿Qué significan las siglas IoT en el ámbito de las THD?",
+                correct: "Internet de las Cosas (Internet of Things).",
+                distractors: [
+                    "Integración Operativa Total (Total Operational Integration).",
+                    "Interfaz de Optimización Técnica (Technical Optimization Interface).",
+                    "Infraestructura de Operaciones Telemáticas (Telematic Operations Infrastructure)."
+                ]
+            },
+            {
+                id: 19,
+                question: "¿Qué función cumplen los sensores IoT en la optimización de procesos productivos en tiempo real?",
+                correct: "Capturan y transmiten datos en tiempo real sobre el estado de las máquinas (temperatura, vibraciones, consumo de energía) para supervisión y automatización.",
+                distractors: [
+                    "Ejecutan directamente el fresado y corte mecánico de piezas metálicas mediante actuadores hidráulicos de alta potencia sin intervención de software.",
+                    "Almacenan de forma aislada los registros contables y las nóminas del personal operativo sin conexión a redes externas ni servidores centrales.",
+                    "Sustituyen por completo los sistemas de alimentación eléctrica trifásica mediante generación fotovoltaica integrada en cada estación de trabajo."
+                ]
+            },
+            {
+                id: 20,
+                question: "¿Qué significan las siglas RPA en la automatización industrial?",
+                correct: "Automatización de Procesos Robóticos (Robotic Process Automation).",
+                distractors: [
+                    "Red de Producción Automatizada (Automated Production Network).",
+                    "Regulación Predictiva de Actuadores (Predictive Actuator Regulation).",
+                    "Reingeniería de Plantas Avanzadas (Advanced Plant Reengineering)."
+                ]
+            },
+            {
+                id: 21,
+                question: "Los robots diseñados para trabajar de forma segura junto a los seres humanos en un entorno colaborativo se denominan _____.",
+                correct: "Cobots (robots colaborativos)",
+                distractors: [
+                    "AGVs (vehículos guiados automatizados)",
+                    "SCADA (supervisión y adquisición de datos)",
+                    "Actuadores neumáticos articulados"
+                ]
+            },
+            {
+                id: 22,
+                question: "¿Cuáles son los tres tipos de robótica industrial mencionados en las THD?",
+                correct: "1. Robots manipuladores, 2. Cobots (robots colaborativos), 3. Robots móviles",
+                distractors: [
+                    "1. Robots hidráulicos, 2. Robots biomiméticos, 3. Robots aeroespaciales",
+                    "1. Robots teleoperados, 2. Robots domésticos, 3. Robots quirúrgicos",
+                    "1. Robots cartesianos, 2. Robots submarinos, 3. Robots nanoscópicos"
+                ]
+            },
+            {
+                id: 23,
+                question: "¿Cuáles son los tres tipos de automatización según sus áreas de aplicación en la industria?",
+                correct: "1. Automatización de procesos, 2. Automatización del ensamblaje, 3. Automatización logística",
+                distractors: [
+                    "1. Automatización financiera, 2. Automatización publicitaria, 3. Automatización jurídica",
+                    "1. Automatización fija, 2. Automatización programable, 3. Automatización flexible",
+                    "1. Automatización neumática, 2. Automatización térmica, 3. Automatización óptica"
+                ]
+            },
+            {
+                id: 24,
+                question: "¿Qué es la Hiperautomatización?",
+                correct: "Tendencia futura que combina Big Data, Inteligencia Artificial y Automatización de Procesos Robóticos (RPA) para automatizar procesos complejos.",
+                distractors: [
+                    "Sustitución exclusiva de motores eléctricos convencionales por sistemas hidráulicos de alta velocidad en líneas de envasado.",
+                    "Conexión física mediante cableado estructurado de todos los sensores analógicos de una planta a un único panel de control manual.",
+                    "Estandarización de turnos rotativos de trabajo humano para mantener operativas las máquinas durante las veinticuatro horas del día."
+                ]
+            },
+            {
+                id: 25,
+                question: "¿Qué tecnologías de impresión 3D corresponden a las siglas FDM y SLS?",
+                correct: "FDM: Fused Deposition Modeling (Modelado por Deposición Fundida) y SLS: Selective Laser Sintering (Sinterizado Selectivo por Láser)",
+                distractors: [
+                    "FDM: Fast Digital Manufacturing (Fabricación Digital Rápida) y SLS: Solid Layer Spraying (Pulverización de Capas Sólidas)",
+                    "FDM: Fluid Dynamic Molding (Moldeo Dinámico de Fluidos) y SLS: Surface Light Scanning (Escaneo Superficial por Luz)",
+                    "FDM: Fiber Density Modulation (Modulación de Densidad de Fibra) y SLS: Sequential Lamination System (Sistema de Laminación Secuencial)"
+                ]
+            },
+            {
+                id: 26,
+                question: "¿Qué tecnologías de impresión 3D corresponden a las siglas SLA y DMLS?",
+                correct: "SLA: Stereolithography (Estereolitografía) y DMLS: Direct Metal Laser Sintering (Sinterizado Directo de Metal por Láser)",
+                distractors: [
+                    "SLA: Selective Liquid Additive (Aditivo Líquido Selectivo) y DMLS: Dynamic Multi-Layer Shaping (Conformado Dinámico Multicapa)",
+                    "SLA: Solid Laser Ablation (Ablación Sólida por Láser) y DMLS: Digital Molding Light System (Sistema de Luz de Moldeo Digital)",
+                    "SLA: Sintered Lamination Alloy (Aleación de Laminación Sinterizada) y DMLS: Direct Material Layering Software (Software de Capas Directas)"
+                ]
+            },
+            {
+                id: 27,
+                question: "¿Cómo influye la impresión 3D en la cadena de suministro industrial?",
+                correct: "Permite una producción descentralizada y optimiza la gestión del inventario mediante la fabricación de repuestos bajo demanda.",
+                distractors: [
+                    "Obliga a concentrar toda la fabricación en megafactorías centrales y a mantener grandes almacenes de piezas de recambio obsoletas.",
+                    "Incrementa la dependencia del transporte marítimo internacional de larga distancia para el suministro de componentes estándar.",
+                    "Exige la fabricación previa de moldes metálicos de alto coste antes de poder producir cualquier unidad funcional de prueba."
+                ]
+            },
+            {
+                id: 28,
+                question: "¿Cuáles son tres aplicaciones destacadas de la impresión 3D en la industria?",
+                correct: "1. Prototipado rápido, 2. Personalización masiva (medicina, moda, joyería), 3. Fabricación de piezas complejas (aeroespacial, automoción)",
+                distractors: [
+                    "1. Refinación petroquímica continua, 2. Laminación de bobinas de acero a gran escala, 3. Generación eléctrica de ciclo combinado",
+                    "1. Transporte ferroviario de mercancías a granel, 2. Almacenamiento frigorífico portuario, 3. Extracción minera a cielo abierto",
+                    "1. Auditoría contable automatizada, 2. Gestión de nóminas corporativas, 3. Enrutamiento de telecomunicaciones submarinas"
+                ]
+            },
+            {
+                id: 29,
+                question: "¿Cuáles son tres desafíos clave asociados a la adopción de la robótica y automatización?",
+                correct: "1. Costos iniciales elevados, 2. Resistencia al cambio en la organización, 3. Preocupaciones de seguridad y ética en el empleo",
+                distractors: [
+                    "1. Exceso de mano de obra altamente cualificada disponible, 2. Reducción drástica de la precisión dimensional, 3. Imposibilidad de operar en turnos nocturnos",
+                    "1. Aumento exponencial de errores humanos repetitivos, 2. Disminución de la velocidad de ciclo productivo, 3. Incompatibilidad total con sistemas informáticos",
+                    "1. Obsolescencia inmediata del software en menos de un mes, 2. Prohibición legal en sectores industriales, 3. Consumo energético superior al de una fundición"
+                ]
+            },
+            {
+                id: 30,
+                question: "¿Qué es la Gestión del Cambio?",
+                correct: "Es el conjunto de procesos y estrategias estructurados para preparar, apoyar y ayudar a los individuos y organizaciones en la transición ante transformaciones tecnológicas o de procesos.",
+                distractors: [
+                    "Es el procedimiento contable y financiero mediante el cual se registran las variaciones en el tipo de cambio de divisas extranjeras durante las exportaciones.",
+                    "Es el protocolo técnico de mantenimiento encargado de sustituir piezas mecánicas desgastadas en líneas de montaje automatizadas sin detener el flujo.",
+                    "Es la normativa laboral que regula exclusivamente la rotación de turnos horarios y las sustituciones temporales del personal operativo en fábrica."
+                ]
+            },
+            {
+                id: 31,
+                question: "¿Cuáles son los cinco componentes esenciales de la Gestión del Cambio?",
+                correct: "1. Identificación de necesidades, 2. Comunicación efectiva, 3. Capacitación y formación, 4. Planificación y estrategia, 5. Evaluación y retroalimentación",
+                distractors: [
+                    "1. Subcontratación externa, 2. Reducción salarial, 3. Centralización autoritaria, 4. Control punitivo, 5. Liquidación de activos",
+                    "1. Segmentación de mercado, 2. Fijación de precios, 3. Distribución logística, 4. Promoción comercial, 5. Fidelización posventa",
+                    "1. Adquisición de hardware, 2. Cableado estructurado, 3. Migración a la nube, 4. Ciberseguridad perimetral, 5. Auditoría de código"
+                ]
+            },
+            {
+                id: 32,
+                question: "¿Cuáles son las tres etapas del Modelo del Cambio de Kurt Lewin?",
+                correct: "1. Descongelar (Unfreeze), 2. Cambiar (Change / Move), 3. Congelar (Refreeze)",
+                distractors: [
+                    "1. Diagnosticar (Diagnose), 2. Ejecutar (Execute), 3. Liquidar (Liquidate)",
+                    "1. Planificar (Plan), 2. Verificar (Check), 3. Estandarizar (Standardize)",
+                    "1. Negar (Deny), 2. Negociar (Bargain), 3. Aceptar (Accept)"
+                ]
+            },
+            {
+                id: 33,
+                question: "¿En qué consiste la etapa de 'Descongelar' en el modelo de Kurt Lewin?",
+                correct: "Preparar a las personas y a la organización para el cambio, cuestionando el statu quo y reduciendo las resistencias existentes.",
+                distractors: [
+                    "Consolidar los nuevos hábitos en la cultura corporativa mediante políticas formales y sistemas de recompensa a largo plazo.",
+                    "Implementar de forma abrupta y sin previo aviso las nuevas herramientas tecnológicas en todos los departamentos operativos.",
+                    "Evaluar mediante indicadores financieros el retorno de la inversión una vez concluido el proyecto de transformación."
+                ]
+            },
+            {
+                id: 34,
+                question: "¿Qué representan las siglas del modelo de gestión del cambio ADKAR?",
+                correct: "A: Awareness (Conciencia), D: Desire (Deseo), K: Knowledge (Conocimiento), A: Ability (Capacidad), R: Reinforcement (Refuerzo)",
+                distractors: [
+                    "A: Analysis (Análisis), D: Design (Diseño), K: Key-metrics (Métricas clave), A: Action (Acción), R: Review (Revisión)",
+                    "A: Alignment (Alineación), D: Deployment (Despliegue), K: Know-how (Saber hacer), A: Audit (Auditoría), R: Results (Resultados)",
+                    "A: Assessment (Evaluación), D: Development (Desarrollo), K: Knowledge (Conocimiento), A: Automation (Automatización), R: Reporting (Informes)"
+                ]
+            },
+            {
+                id: 35,
+                question: "¿Cuántos pasos propone John Kotter en su modelo de cambio organizacional?",
+                correct: "8 pasos (Resaltar la urgencia, crear el equipo, definir la nueva visión, compartir la visión, animar a actuar, establecer objetivos, seguir el progreso y fortalecer el cambio).",
+                distractors: [
+                    "5 etapas (Negación, ira, negociación, depresión y aceptación progresiva de la nueva realidad laboral).",
+                    "3 fases secuenciales (Descongelamiento de hábitos actuales, transición hacia el nuevo estado y recongelamiento institucional).",
+                    "4 fases cíclicas (Planificar los objetivos, hacer las pruebas piloto, verificar desviaciones y actuar correctivamente)."
+                ]
+            },
+            {
+                id: 36,
+                question: "¿Cuáles son el primer y el último paso del modelo de 8 pasos de Kotter?",
+                correct: "Paso 1: Resaltar la urgencia (Crear sentido de urgencia). Paso 8: Fortalecer el cambio (Instituir el cambio en la cultura de la empresa).",
+                distractors: [
+                    "Paso 1: Formar una coalición conductora. Paso 8: Comunicar la visión estratégica a toda la plantilla.",
+                    "Paso 1: Eliminar los obstáculos estructurales. Paso 8: Generar triunfos a corto plazo visibles para todos.",
+                    "Paso 1: Desarrollar una visión y estrategia. Paso 8: Evaluar el desempeño individual mediante auditorías."
+                ]
+            },
+            {
+                id: 37,
+                question: "¿Cuáles son las 5 etapas emocionales de la Curva del Cambio de Kübler-Ross?",
+                correct: "1. Negación, 2. Enojo, 3. Negociación, 4. Depresión, 5. Aceptación",
+                distractors: [
+                    "1. Conciencia, 2. Deseo, 3. Conocimiento, 4. Capacidad, 5. Refuerzo",
+                    "1. Euforia, 2. Incertidumbre, 3. Parálisis, 4. Experimentación, 5. Consolidación",
+                    "1. Diagnóstico, 2. Planificación, 3. Ejecución, 4. Seguimiento, 5. Cierre"
+                ]
+            },
+            {
+                id: 38,
+                question: "¿Cómo se clasifican los elementos en el Modelo de las 7S de McKinsey?",
+                correct: "Elementos Objetivos: Estrategia, Estructura, Sistemas. Elementos Subjetivos: Valores compartidos, Personal, Estilo, Habilidades.",
+                distractors: [
+                    "Elementos Internos: Producto, Precio, Plaza, Promoción. Elementos Externos: Política, Economía, Sociedad.",
+                    "Elementos Primarios: Liderazgo, Cultura, Talento. Elementos Secundarios: Finanzas, Logística, Marketing, Ventas.",
+                    "Elementos Técnicos: Hardware, Software, Redes, Datos. Elementos Humanos: Dirección, Operarios, Clientes."
+                ]
+            },
+            {
+                id: 39,
+                question: "¿Qué significan las etapas del ciclo PDCA?",
+                correct: "P (Plan): Planear lo que se va a realizar. D (Do): Realizar lo planeado. C (Check): Verificar lo realizado. A (Act): Actuar en base a la verificación.",
+                distractors: [
+                    "P (Predict): Predecir riesgos. D (Design): Diseñar prototipos. C (Control): Controlar costes. A (Approve): Aprobar presupuestos.",
+                    "P (Prepare): Preparar recursos. D (Deliver): Entregar pedidos. C (Calculate): Calcular márgenes. A (Audit): Auditar cuentas.",
+                    "P (Prioritize): Priorizar tareas. D (Delegate): Delegar funciones. C (Coordinate): Coordinar equipos. A (Assess): Evaluar personal."
+                ]
+            },
+            {
+                id: 40,
+                question: "¿Cuáles son las tres fases del Modelo de Transición de Bridges?",
+                correct: "1. Terminar, perder y dejar ir (Ending, losing and letting go), 2. Zona neutral (Neutral Zone), 3. Nuevos comienzos (A New Beginning)",
+                distractors: [
+                    "1. Descongelar (Unfreeze), 2. Mover (Move), 3. Recongelar (Refreeze)",
+                    "1. Conciencia (Awareness), 2. Capacidad (Ability), 3. Refuerzo (Reinforcement)",
+                    "1. Iniciación (Initiation), 2. Implementación (Implementation), 3. Institucionalización (Institutionalization)"
+                ]
+            },
+            {
+                id: 41,
+                question: "¿Qué acciones ayudan a reducir la resistencia al cambio dentro de una organización?",
+                correct: "Involucrar a los empleados en el proceso, brindar capacitación continua y comunicar claramente los beneficios del cambio.",
+                distractors: [
+                    "Imponer las nuevas directrices mediante sanciones disciplinarias inmediatas y restringir el acceso a la información estratégica.",
+                    "Ocultar los posibles impactos operativos hasta el día de la implantación para evitar debates previos entre los departamentos.",
+                    "Sustituir de forma sistemática a los trabajadores veteranos por personal externo sin realizar procesos de transferencia de conocimiento."
+                ]
+            },
+            {
+                id: 42,
+                question: "¿Cuáles son cuatro habilidades directivas esenciales de liderazgo para la gestión del cambio?",
+                correct: "1. Visión estratégica, 2. Empatía y comunicación efectiva, 3. Capacidad para la toma de decisiones rápida y efectiva, 4. Fomento de la creatividad y la colaboración",
+                distractors: [
+                    "1. Control microoperativo riguroso, 2. Comunicación unidireccional cerrada, 3. Aversión absoluta al riesgo, 4. Competencia individual entre departamentos",
+                    "1. Especialización técnica exclusiva, 2. Delegación total de responsabilidades, 3. Aplicación inflexible de normas, 4. Reducción sistemática de plantillas",
+                    "1. Contabilidad analítica avanzada, 2. Negociación bancaria internacional, 3. Gestión de compras a granel, 4. Auditoría fiscal preventiva"
+                ]
+            },
+            {
+                id: 43,
+                question: "¿Qué herramientas y metodologías ágiles se suelen emplear para fomentar la innovación organizacional?",
+                correct: "Design Thinking, Scrum, Kanban, Hackathons, y herramientas digitales colaborativas (como Trello, Jira y Slack).",
+                distractors: [
+                    "Diagramas de Gantt rígidos en cascada, archivos físicos centralizados y memorandos internos impresos de circulación jerárquica.",
+                    "Contabilidad por partida doble, auditorías anuales estáticas y sistemas ERP monolíticos sin integración en tiempo real.",
+                    "Estudios de tiempos y movimientos con cronómetro, cadenas de montaje lineales y buzones físicos de sugerencias anónimas."
+                ]
+            },
+            {
+                id: 44,
+                question: "¿Qué es la Economía Colaborativa en el sector de los servicios?",
+                correct: "Modelo que emplea plataformas tecnológicas digitales para conectar directamente la oferta y la demanda de bienes o servicios (ej. Uber, Airbnb).",
+                distractors: [
+                    "Modelo industrial tradicional basado en la propiedad exclusiva de grandes flotas y activos físicos gestionados mediante franquicias cerradas.",
+                    "Sistema cooperativo agrario enfocado en la compra conjunta de maquinaria pesada y fertilizantes sin intermediación de aplicaciones móviles.",
+                    "Régimen fiscal estatal destinado a subvencionar empresas públicas de transporte ferroviario y suministro energético nacional."
+                ]
+            },
+            {
+                id: 45,
+                question: "¿Cómo contribuyen los Sistemas Ciberfísicos (CPS) y el IoT al control de calidad en tiempo real?",
+                correct: "Analizan datos continuos capturados por sensores con algoritmos de IA, identificando desviaciones de parámetros e interviniendo antes de producir defectos.",
+                distractors: [
+                    "Realizan muestreos estadísticos destructivos al final de cada semana sobre lotes ya embalados y almacenados en centros de distribución.",
+                    "Sustituyen los sensores físicos en planta por encuestas manuales de satisfacción enviadas a los clientes meses después de la entrega.",
+                    "Detienen automáticamente toda la fábrica cada hora para que un equipo de inspectores calibre manualmente cada herramienta de corte."
+                ]
+            }
+        ];
+
+        // Application State
+        let orderMode = 'ordered'; // 'ordered' | 'shuffled'
+        let feedbackMode = 'immediate'; // 'immediate' | 'exam'
+        let activeQuestions = [];
+        let currentIndex = 0;
+        let userAnswers = []; // Array storing selected option index (or null) per question
+
+        // DOM Elements
+        const welcomeView = document.getElementById('welcome-view');
+        const quizView = document.getElementById('quiz-view');
+        const resultsView = document.getElementById('results-view');
+        const headerControls = document.getElementById('header-controls');
+        const currentQNumEl = document.getElementById('current-q-num');
+        const answeredCountEl = document.getElementById('answered-count');
+        const progressBarEl = document.getElementById('progress-bar');
+        const originalNumberTag = document.getElementById('original-number-tag');
+        const questionTextEl = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const feedbackBanner = document.getElementById('feedback-banner');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const questionMapPanel = document.getElementById('question-map-panel');
+        const questionGrid = document.getElementById('question-grid');
+        const confirmModal = document.getElementById('confirm-modal');
+        const confirmModalText = document.getElementById('confirm-modal-text');
+
+        // Shuffle utility (Fisher-Yates)
+        function shuffleArray(arr) {
+            const copy = [...arr];
+            for (let i = copy.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [copy[i], copy[j]] = [copy[j], copy[i]];
+            }
+            return copy;
+        }
+
+        function setOrderMode(mode) {
+            orderMode = mode;
+            const labelOrdered = document.getElementById('label-ordered');
+            const labelShuffled = document.getElementById('label-shuffled');
+
+            if (mode === 'ordered') {
+                labelOrdered.className = "relative flex items-start p-3.5 bg-white rounded-xl border-2 border-indigo-600 cursor-pointer shadow-sm";
+                labelShuffled.className = "relative flex items-start p-3.5 bg-white rounded-xl border border-slate-200 hover:border-slate-300 cursor-pointer transition-all";
+            } else {
+                labelShuffled.className = "relative flex items-start p-3.5 bg-white rounded-xl border-2 border-indigo-600 cursor-pointer shadow-sm";
+                labelOrdered.className = "relative flex items-start p-3.5 bg-white rounded-xl border border-slate-200 hover:border-slate-300 cursor-pointer transition-all";
+            }
+        }
+
+        function startQuiz() {
+            feedbackMode = document.getElementById('feedback-mode').value;
+            
+            // Build question set with shuffled options per question
+            const baseList = orderMode === 'shuffled' ? shuffleArray(RAW_FLASHCARDS) : [...RAW_FLASHCARDS];
+            
+            activeQuestions = baseList.map(item => {
+                const options = shuffleArray([
+                    { text: item.correct, isCorrect: true },
+                    ...item.distractors.map(d => ({ text: d, isCorrect: false }))
+                ]);
+                return {
+                    id: item.id,
+                    question: item.question,
+                    correctText: item.correct,
+                    options: options
+                };
+            });
+
+            userAnswers = new Array(activeQuestions.length).fill(null);
+            currentIndex = 0;
+
+            welcomeView.classList.add('hidden');
+            resultsView.classList.add('hidden');
+            quizView.classList.remove('hidden');
+            headerControls.classList.remove('hidden');
+            questionMapPanel.classList.add('hidden');
+
+            renderQuestionMap();
+            renderCurrentQuestion();
+        }
+
+        function renderQuestionMap() {
+            questionGrid.innerHTML = '';
+            activeQuestions.forEach((q, idx) => {
+                const btn = document.createElement('button');
+                const isCurrent = idx === currentIndex;
+                const isAnswered = userAnswers[idx] !== null;
+
+                let baseClasses = "h-8 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center justify-center ";
+                if (isCurrent) {
+                    baseClasses += "bg-indigo-600 text-white ring-2 ring-indigo-300";
+                } else if (isAnswered) {
+                    if (feedbackMode === 'immediate') {
+                        const wasCorrect = q.options[userAnswers[idx]].isCorrect;
+                        baseClasses += wasCorrect 
+                            ? "bg-emerald-600 text-white hover:bg-emerald-700" 
+                            : "bg-rose-600 text-white hover:bg-rose-700";
+                    } else {
+                        baseClasses += "bg-slate-700 text-white hover:bg-slate-800";
+                    }
+                } else {
+                    baseClasses += "bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200";
+                }
+
+                btn.className = baseClasses;
+                btn.textContent = idx + 1;
+                btn.title = `Ir a pregunta ${idx + 1} (Flashcard #${q.id})`;
+                btn.onclick = () => {
+                    currentIndex = idx;
+                    renderCurrentQuestion();
+                };
+                questionGrid.appendChild(btn);
+            });
+
+            const answeredCount = userAnswers.filter(a => a !== null).length;
+            answeredCountEl.textContent = answeredCount;
+        }
+
+        function toggleQuestionMap() {
+            questionMapPanel.classList.toggle('hidden');
+        }
+
+        function renderCurrentQuestion() {
+            const q = activeQuestions[currentIndex];
+            const selectedIdx = userAnswers[currentIndex];
+            const isAnswered = selectedIdx !== null;
+
+            // Update headers & progress
+            currentQNumEl.textContent = currentIndex + 1;
+            originalNumberTag.textContent = `Flashcard #${q.id}`;
+            progressBarEl.style.width = `${((currentIndex + 1) / activeQuestions.length) * 100}%`;
+            questionTextEl.textContent = q.question;
+
+            // Render options
+            optionsContainer.innerHTML = '';
+            const letters = ['A', 'B', 'C', 'D'];
+
+            q.options.forEach((opt, optIdx) => {
+                const btn = document.createElement('button');
+                let cardStyle = "w-full text-left p-4 rounded-xl border transition-all flex items-start gap-3.5 cursor-pointer ";
+                let badgeStyle = "w-7 h-7 rounded-lg text-xs font-bold flex items-center justify-center shrink-0 mt-0.5 transition-colors ";
+
+                if (!isAnswered) {
+                    cardStyle += "border-slate-200 bg-white hover:border-indigo-400 hover:bg-indigo-50/30 text-slate-800";
+                    badgeStyle += "bg-slate-100 text-slate-600";
+                } else if (feedbackMode === 'exam') {
+                    // Strict exam mode: highlight chosen option neutrally without revealing correctness
+                    if (selectedIdx === optIdx) {
+                        cardStyle += "border-indigo-600 bg-indigo-50/70 text-indigo-950 font-medium ring-1 ring-indigo-600";
+                        badgeStyle += "bg-indigo-600 text-white";
+                    } else {
+                        cardStyle += "border-slate-200 bg-white hover:border-slate-300 text-slate-700";
+                        badgeStyle += "bg-slate-100 text-slate-500";
+                    }
+                } else {
+                    // Immediate feedback mode: lock selection and show right/wrong
+                    btn.disabled = true;
+                    btn.classList.remove('cursor-pointer');
+                    if (opt.isCorrect) {
+                        cardStyle += "border-emerald-500 bg-emerald-50 text-emerald-950 font-medium";
+                        badgeStyle += "bg-emerald-600 text-white";
+                    } else if (selectedIdx === optIdx && !opt.isCorrect) {
+                        cardStyle += "border-rose-500 bg-rose-50 text-rose-950 font-medium";
+                        badgeStyle += "bg-rose-600 text-white";
+                    } else {
+                        cardStyle += "border-slate-200 bg-slate-50/60 text-slate-400";
+                        badgeStyle += "bg-slate-100 text-slate-400";
+                    }
+                }
+
+                btn.className = cardStyle;
+                btn.innerHTML = `
+                    <span class="${badgeStyle}">${letters[optIdx]}</span>
+                    <span class="text-sm sm:text-base leading-snug">${opt.text}</span>
+                `;
+
+                btn.onclick = () => handleOptionSelect(optIdx);
+                optionsContainer.appendChild(btn);
+            });
+
+            // Handle immediate feedback banner
+            if (isAnswered && feedbackMode === 'immediate') {
+                const isCorrect = q.options[selectedIdx].isCorrect;
+                feedbackBanner.classList.remove('hidden');
+                if (isCorrect) {
+                    feedbackBanner.className = "p-4 rounded-xl text-sm border font-medium flex items-center gap-3 bg-emerald-50 border-emerald-200 text-emerald-800";
+                    feedbackBanner.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-600 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                        <span>Respuesta correcta.</span>
+                    `;
+                } else {
+                    feedbackBanner.className = "p-4 rounded-xl text-sm border font-medium flex items-center gap-3 bg-rose-50 border-rose-200 text-rose-800";
+                    feedbackBanner.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-rose-600 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                        </svg>
+                        <span>Respuesta incorrecta. Revisa la opción marcada en verde.</span>
+                    `;
+                }
+            } else {
+                feedbackBanner.classList.add('hidden');
+            }
+
+            // Update Navigation Buttons
+            prevBtn.disabled = currentIndex === 0;
+            if (currentIndex === activeQuestions.length - 1) {
+                nextBtn.classList.add('hidden');
+            } else {
+                nextBtn.classList.remove('hidden');
+            }
+
+            renderQuestionMap();
+        }
+
+        function handleOptionSelect(optIdx) {
+            if (feedbackMode === 'immediate' && userAnswers[currentIndex] !== null) {
+                return; // Prevent changing answer in immediate feedback mode
+            }
+            userAnswers[currentIndex] = optIdx;
+            renderCurrentQuestion();
+        }
+
+        function prevQuestion() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderCurrentQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (currentIndex < activeQuestions.length - 1) {
+                currentIndex++;
+                renderCurrentQuestion();
+            }
+        }
+
+        function attemptFinishQuiz() {
+            const unanswered = userAnswers.filter(a => a === null).length;
+            if (unanswered > 0) {
+                confirmModalText.textContent = `Tienes ${unanswered} ${unanswered === 1 ? 'pregunta sin responder' : 'preguntas sin responder'} de las 45 totales. Las preguntas en blanco contarán como no acertadas.`;
+                confirmModal.classList.remove('hidden');
+            } else {
+                finalizeQuiz();
+            }
+        }
+
+        function closeConfirmModal() {
+            confirmModal.classList.add('hidden');
+        }
+
+        function finalizeQuiz() {
+            closeConfirmModal();
+            quizView.classList.add('hidden');
+            headerControls.classList.add('hidden');
+            resultsView.classList.remove('hidden');
+
+            let correctCount = 0;
+            let wrongCount = 0;
+            let blankCount = 0;
+
+            activeQuestions.forEach((q, idx) => {
+                const ansIdx = userAnswers[idx];
+                if (ansIdx === null) {
+                    blankCount++;
+                } else if (q.options[ansIdx].isCorrect) {
+                    correctCount++;
+                } else {
+                    wrongCount++;
+                }
+            });
+
+            const grade = ((correctCount / activeQuestions.length) * 10).toFixed(2);
+            document.getElementById('stat-grade').textContent = grade;
+            document.getElementById('stat-correct').textContent = correctCount;
+            document.getElementById('stat-wrong').textContent = wrongCount;
+            document.getElementById('stat-blank').textContent = blankCount;
+            document.getElementById('count-incorrect-tab').textContent = wrongCount + blankCount;
+
+            // Default view to incorrect/blank if there are any, otherwise show all
+            if (wrongCount + blankCount > 0) {
+                filterReview('incorrect');
+            } else {
+                filterReview('all');
+            }
+        }
+
+        function filterReview(mode) {
+            const btnIncorrect = document.getElementById('filter-incorrect');
+            const btnAll = document.getElementById('filter-all');
+            const reviewList = document.getElementById('review-list');
+
+            if (mode === 'incorrect') {
+                btnIncorrect.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-rose-600 text-white cursor-pointer transition-colors";
+                btnAll.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer transition-colors";
+            } else {
+                btnAll.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 text-white cursor-pointer transition-colors";
+                btnIncorrect.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer transition-colors";
+            }
+
+            reviewList.innerHTML = '';
+            let displayedCount = 0;
+
+            activeQuestions.forEach((q, idx) => {
+                const ansIdx = userAnswers[idx];
+                const isBlank = ansIdx === null;
+                const isCorrect = !isBlank && q.options[ansIdx].isCorrect;
+
+                if (mode === 'incorrect' && isCorrect) return;
+                displayedCount++;
+
+                const card = document.createElement('div');
+                card.className = `p-5 rounded-xl border space-y-3 ${
+                    isCorrect ? 'bg-emerald-50/30 border-emerald-200' : 
+                    isBlank ? 'bg-slate-50 border-slate-200' : 'bg-rose-50/30 border-rose-200'
+                }`;
+
+                const statusBadge = isCorrect 
+                    ? `<span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">Correcta</span>`
+                    : isBlank 
+                    ? `<span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-200 text-slate-700">En blanco</span>`
+                    : `<span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-100 text-rose-800">Incorrecta</span>`;
+
+                const userChoiceHtml = isBlank 
+                    ? `<p class="text-xs sm:text-sm text-slate-500 italic">No seleccionaste ninguna opción.</p>`
+                    : !isCorrect 
+                    ? `<div class="p-3 rounded-lg bg-rose-100/70 border border-rose-200 text-rose-900 text-xs sm:text-sm">
+                         <span class="font-bold block text-xs uppercase tracking-wider text-rose-700 mb-0.5">Tu respuesta:</span>
+                         ${q.options[ansIdx].text}
+                       </div>`
+                    : '';
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="text-xs font-bold text-slate-500">Pregunta ${idx + 1} (Flashcard #${q.id})</span>
+                        ${statusBadge}
+                    </div>
+                    <p class="font-semibold text-slate-900 text-sm sm:text-base">${q.question}</p>
+                    <div class="space-y-2 pt-1">
+                        ${userChoiceHtml}
+                        <div class="p-3 rounded-lg bg-emerald-100/70 border border-emerald-200 text-emerald-950 text-xs sm:text-sm">
+                            <span class="font-bold block text-xs uppercase tracking-wider text-emerald-800 mb-0.5">Respuesta correcta:</span>
+                            ${q.correctText}
+                        </div>
+                    </div>
+                `;
+                reviewList.appendChild(card);
+            });
+
+            if (displayedCount === 0 && mode === 'incorrect') {
+                reviewList.innerHTML = `
+                    <div class="text-center py-8 text-slate-500 text-sm">
+                        ¡Enhorabuena! No has cometido ningún fallo ni has dejado preguntas en blanco.
+                    </div>
+                `;
+            }
+        }
+
+        function restartSameConfig() {
+            startQuiz();
+        }
+
+        function returnToMenu() {
+            resultsView.classList.add('hidden');
+            quizView.classList.add('hidden');
+            headerControls.classList.add('hidden');
+            welcomeView.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
